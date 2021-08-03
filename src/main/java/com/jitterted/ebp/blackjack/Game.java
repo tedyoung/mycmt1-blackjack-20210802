@@ -4,7 +4,6 @@ import org.fusesource.jansi.Ansi;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -52,12 +51,8 @@ public class Game {
 
     private void dealRoundOfCards() {
         // deal card to player first as that's the Rule of Blackjack
-        dealCardToPlayer();
-        dealCardToDealer();
-    }
-
-    private void dealCardToPlayer() {
-        playerHand.getCards().add(deck.draw());
+        playerHand.drawCardFrom(deck);
+        dealerHand.drawCardFrom(deck);
     }
 
     public void play() {
@@ -72,9 +67,9 @@ public class Game {
             System.out.println("You Busted, so you lose.  💸");
         } else if (isDealerBusted()) {
             System.out.println("Dealer went BUST, Player wins! Yay for you!! 💵");
-        } else if (handValueOf(dealerHand.getCards()) < handValueOf(playerHand.getCards())) {
+        } else if (dealerHand.value() < playerHand.value()) {
             System.out.println("You beat the Dealer! 💵");
-        } else if (handValueOf(dealerHand.getCards()) == handValueOf(playerHand.getCards())) {
+        } else if (dealerHand.value() == playerHand.value()) {
             System.out.println("Push: You tie with the Dealer. 💸");
         } else {
             System.out.println("You lost to the Dealer. 💸");
@@ -82,24 +77,20 @@ public class Game {
     }
 
     private boolean isDealerBusted() {
-        return handValueOf(dealerHand.getCards()) > 21;
+        return dealerHand.value() > 21;
     }
 
     private void dealerTurn(boolean playerBusted) {
         // Dealer makes its choice automatically based on a simple heuristic (<=16, hit, 17>=stand)
         if (!playerBusted) {
             while (shouldDealerHit()) {
-                dealCardToDealer();
+                dealerHand.drawCardFrom(deck);
             }
         }
     }
 
-    private void dealCardToDealer() {
-        dealerHand.getCards().add(deck.draw());
-    }
-
     private boolean shouldDealerHit() {
-        return handValueOf(dealerHand.getCards()) <= 16;
+        return dealerHand.value() <= 16;
     }
 
     private boolean playerTurn() {
@@ -112,8 +103,8 @@ public class Game {
                 break;
             }
             if (playerHits(playerChoice)) {
-                dealCardToPlayer();
-                if (handValueOf(playerHand.getCards()) > 21) {
+                playerHand.drawCardFrom(deck);
+                if (playerHand.value() > 21) {
                     playerBusted = true;
                 }
             } else {
@@ -159,7 +150,7 @@ public class Game {
     private void displayGameState() {
         eraseScreen();
         System.out.println("Dealer has: ");
-        System.out.println(dealerHand.getCards().get(0).display()); // first card is Face Up
+        System.out.println(dealerHand.firstCard().display()); // first card is Face Up
 
         // second card is the hole card, which is hidden
         displayBackOfCard();
@@ -170,8 +161,8 @@ public class Game {
     private void displayPlayer() {
         System.out.println();
         System.out.println("Player has: ");
-        displayHand(playerHand.getCards());
-        System.out.println(" (" + handValueOf(playerHand.getCards()) + ")");
+        playerHand.display();
+        System.out.println(" (" + playerHand.value() + ")");
     }
 
     private void eraseScreen() {
@@ -192,18 +183,11 @@ public class Game {
                         .a("└─────────┘"));
     }
 
-    private void displayHand(List<Card> hand) {
-        System.out.println(hand.stream()
-                               .map(Card::display)
-                               .collect(Collectors.joining(
-                                       ansi().cursorUp(6).cursorRight(1).toString())));
-    }
-
     private void displayFinalGameState() {
         eraseScreen();
         System.out.println("Dealer has: ");
-        displayHand(dealerHand.getCards());
-        System.out.println(" (" + handValueOf(dealerHand.getCards()) + ")");
+        dealerHand.display();
+        System.out.println(" (" + dealerHand.value() + ")");
 
         displayPlayer();
     }
