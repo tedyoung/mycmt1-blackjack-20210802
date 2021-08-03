@@ -16,7 +16,7 @@ public class Hand {
         this.cards.addAll(cards);
     }
 
-    int value() {
+    public int value() {
         int handValue = cards
                 .stream()
                 .mapToInt(Card::rankValue)
@@ -35,15 +35,15 @@ public class Hand {
         return handValue;
     }
 
-    Card firstCard() {
+    public Card firstCard() {
         return cards.get(0);
     }
 
-    void drawCardFrom(Deck deck) {
+    public void drawCardFrom(Deck deck) {
         cards.add(deck.draw());
     }
 
-    void display() {
+    public void display() {
         System.out.println(cards.stream()
                                 .map(Card::display)
                                 .collect(Collectors.joining(
