@@ -2,7 +2,6 @@ package com.jitterted.ebp.blackjack;
 
 import org.fusesource.jansi.Ansi;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -13,8 +12,8 @@ public class Game {
 
     private final Deck deck;
 
-    private final List<Card> dealerHand = new ArrayList<>();
-    private final List<Card> playerHand = new ArrayList<>();
+    private final Hand dealerHand = new Hand();
+    private final Hand playerHand = new Hand();
 
     public static void main(String[] args) {
         displayWelcomeScreen();
@@ -58,7 +57,7 @@ public class Game {
     }
 
     private void dealCardToPlayer() {
-        playerHand.add(deck.draw());
+        playerHand.getCards().add(deck.draw());
     }
 
     public void play() {
@@ -73,9 +72,9 @@ public class Game {
             System.out.println("You Busted, so you lose.  💸");
         } else if (isDealerBusted()) {
             System.out.println("Dealer went BUST, Player wins! Yay for you!! 💵");
-        } else if (handValueOf(dealerHand) < handValueOf(playerHand)) {
+        } else if (handValueOf(dealerHand.getCards()) < handValueOf(playerHand.getCards())) {
             System.out.println("You beat the Dealer! 💵");
-        } else if (handValueOf(dealerHand) == handValueOf(playerHand)) {
+        } else if (handValueOf(dealerHand.getCards()) == handValueOf(playerHand.getCards())) {
             System.out.println("Push: You tie with the Dealer. 💸");
         } else {
             System.out.println("You lost to the Dealer. 💸");
@@ -83,7 +82,7 @@ public class Game {
     }
 
     private boolean isDealerBusted() {
-        return handValueOf(dealerHand) > 21;
+        return handValueOf(dealerHand.getCards()) > 21;
     }
 
     private void dealerTurn(boolean playerBusted) {
@@ -96,11 +95,11 @@ public class Game {
     }
 
     private void dealCardToDealer() {
-        dealerHand.add(deck.draw());
+        dealerHand.getCards().add(deck.draw());
     }
 
     private boolean shouldDealerHit() {
-        return handValueOf(dealerHand) <= 16;
+        return handValueOf(dealerHand.getCards()) <= 16;
     }
 
     private boolean playerTurn() {
@@ -114,7 +113,7 @@ public class Game {
             }
             if (playerHits(playerChoice)) {
                 dealCardToPlayer();
-                if (handValueOf(playerHand) > 21) {
+                if (handValueOf(playerHand.getCards()) > 21) {
                     playerBusted = true;
                 }
             } else {
@@ -160,7 +159,7 @@ public class Game {
     private void displayGameState() {
         eraseScreen();
         System.out.println("Dealer has: ");
-        System.out.println(dealerHand.get(0).display()); // first card is Face Up
+        System.out.println(dealerHand.getCards().get(0).display()); // first card is Face Up
 
         // second card is the hole card, which is hidden
         displayBackOfCard();
@@ -171,8 +170,8 @@ public class Game {
     private void displayPlayer() {
         System.out.println();
         System.out.println("Player has: ");
-        displayHand(playerHand);
-        System.out.println(" (" + handValueOf(playerHand) + ")");
+        displayHand(playerHand.getCards());
+        System.out.println(" (" + handValueOf(playerHand.getCards()) + ")");
     }
 
     private void eraseScreen() {
@@ -203,8 +202,8 @@ public class Game {
     private void displayFinalGameState() {
         eraseScreen();
         System.out.println("Dealer has: ");
-        displayHand(dealerHand);
-        System.out.println(" (" + handValueOf(dealerHand) + ")");
+        displayHand(dealerHand.getCards());
+        System.out.println(" (" + handValueOf(dealerHand.getCards()) + ")");
 
         displayPlayer();
     }
