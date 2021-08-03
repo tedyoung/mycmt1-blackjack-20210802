@@ -21,19 +21,26 @@ public class Wallet {
         balance += amount;
     }
 
-    private void requireNonZero(int amount) {
-        if (amount == 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public int balance() {
         return balance;
     }
 
-    public void bet(int amount) {
-        requireZeroOrMore(amount);
-        balance -= amount;
+    public void bet(int betAmount) {
+        requireZeroOrMore(betAmount);
+        requireSufficientBalanceFor(betAmount);
+        balance -= betAmount;
+    }
+
+    private void requireSufficientBalanceFor(int amount) {
+        if (amount > balance) {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void requireNonZero(int amount) {
+        if (amount == 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void requireZeroOrMore(int amount) {
