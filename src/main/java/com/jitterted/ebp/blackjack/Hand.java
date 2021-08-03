@@ -35,8 +35,14 @@ public class Hand {
         return handValue;
     }
 
+    // maybe Dealer subclass
     public Card firstCard() {
         return cards.get(0);
+    }
+
+    // maybe Dealer subclass
+    boolean shouldDealerHit() {
+        return value() <= 16;
     }
 
     public void drawCardFrom(Deck deck) {
@@ -48,5 +54,17 @@ public class Hand {
                                 .map(Card::display)
                                 .collect(Collectors.joining(
                                        ansi().cursorUp(6).cursorRight(1).toString())));
+    }
+
+    boolean isBusted() {
+        return value() > 21;
+    }
+
+    boolean beats(Hand hand) {
+        return hand.value() < value();
+    }
+
+    boolean pushes(Hand hand) {
+        return hand.value() == value();
     }
 }
