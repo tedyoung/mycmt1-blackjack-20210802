@@ -16,8 +16,15 @@ public class Wallet {
     }
 
     public void addMoney(int amount) {
-        requireAmountGreaterThanZero(amount);
+        requireZeroOrMore(amount);
+        requireNonZero(amount);
         balance += amount;
+    }
+
+    private void requireNonZero(int amount) {
+        if (amount == 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public int balance() {
@@ -25,12 +32,14 @@ public class Wallet {
     }
 
     public void bet(int amount) {
+        requireZeroOrMore(amount);
         balance -= amount;
     }
 
-    private void requireAmountGreaterThanZero(int amount) {
-        if (amount <= 0) {
+    private void requireZeroOrMore(int amount) {
+        if (amount < 0) {
             throw new IllegalArgumentException();
         }
     }
+
 }

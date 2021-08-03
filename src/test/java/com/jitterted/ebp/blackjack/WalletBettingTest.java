@@ -40,5 +40,23 @@ public class WalletBettingTest {
                 .isTrue();
     }
 
+    @Test
+    public void betZeroIsFine() throws Exception {
+        Wallet wallet = new Wallet(1);
+
+        wallet.bet(0);
+
+        assertThat(wallet.balance())
+                .isEqualTo(1);
+    }
+
+    @Test
+    public void betLessThanZeroThrowsException() throws Exception {
+        Wallet wallet = new Wallet(1);
+
+        assertThatThrownBy(() -> {
+            wallet.bet(-1);
+        }).isInstanceOf(IllegalArgumentException.class);
+    }
 
 }
