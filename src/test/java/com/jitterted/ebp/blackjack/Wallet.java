@@ -7,6 +7,10 @@ public class Wallet {
     public Wallet() {
     }
 
+    public Wallet(int initialDeposit) {
+        balance = initialDeposit;
+    }
+
     public boolean isEmpty() {
         return balance == 0;
     }
@@ -18,6 +22,10 @@ public class Wallet {
 
     public int balance() {
         return balance;
+    }
+
+    public void bet(int amount) {
+        balance -= amount;
     }
 
     private void requireAmountGreaterThanZero(int amount) {
