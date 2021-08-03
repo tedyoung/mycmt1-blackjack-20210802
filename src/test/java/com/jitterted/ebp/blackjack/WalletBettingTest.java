@@ -30,5 +30,15 @@ public class WalletBettingTest {
                 .isEqualTo(27 - 7 - 9);
     }
 
+    @Test
+    public void betFullBalanceThenWalletIsEmpty() throws Exception {
+        Wallet wallet = new Wallet(73);
+
+        wallet.bet(73);
+
+        assertThat(wallet.isEmpty())
+                .isTrue();
+    }
+
 
 }
